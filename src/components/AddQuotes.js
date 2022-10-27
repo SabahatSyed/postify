@@ -46,11 +46,11 @@ export default function AddQuotes() {
   const [author, setAuthor] = useState([]);
   const [favUser, setfavUser] = useState([]);
 
-  const [theme, setTheme] = useState("");
-  const [subtheme, setsubTheme] = useState("");
+  const [theme, setTheme] = useState([]);
+  const [subtheme, setsubTheme] = useState([]);
   const [ename, seteName] = useState("");
   const [eauthor, seteAuthor] = useState([]);
-  const [etheme, seteTheme] = useState("");
+  const [etheme, seteTheme] = useState([]);
   const [eid, seteid] = useState("");
   const [maincat, setmaincat] = useState("");
 
@@ -73,7 +73,7 @@ export default function AddQuotes() {
     await addDoc(quotesRef, {
       name: name,
       author: author,
-      cat: maincat,
+      cat: [maincat],
       subcat: [subtheme],
       fav: favUser,
       isApprove: true,
@@ -81,7 +81,7 @@ export default function AddQuotes() {
     });
     setName("");
     setAuthor("");
-    setTheme("");
+    setTheme([]);
     getquotes();
   };
   console.log(etheme);
@@ -96,8 +96,8 @@ export default function AddQuotes() {
         objectsubmit = {
           name: ename,
           author: eauthor,
-          cat: etheme,
-          subcat: arrayUnion(subtheme),
+          cat: [etheme],
+          subcat: [subtheme],
         };
       } else {
         objectsubmit = {
@@ -118,7 +118,7 @@ export default function AddQuotes() {
 
       seteName("");
       seteAuthor("");
-      seteTheme("");
+      seteTheme([]);
       getquotes();
       setOpen1(false);
     } catch (err) {}
@@ -191,9 +191,34 @@ export default function AddQuotes() {
   };
 
   const exportdata = () => {
-    console.log("exported");
+    console.log("exported",quotes);
+    var quote=quotes
+    quotes?.map((items,index)=>{
+      var cats=""
+      items.cat?.map((i)=>{
+        cats=i+" "+cats
+      })
+      quote[index].cat=cats
+
+    })
+    quotes?.map((items,index)=>{
+      var subcats=""
+      items.subcat?.map((i)=>{
+        subcats=i+" "+subcats
+      })
+      quote[index].subcat=subcats
+    })
+    quotes?.map((items,index)=>{
+      var fav=""
+      items.fav?.map((i)=>{
+        fav=i+" "+fav
+      })
+      quote[index].fav=fav
+    })
+    console.log("finalquotes",quote)
+
     let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.json_to_sheet(quotes);
+    let ws = XLSX.utils.json_to_sheet(quote);
 
     XLSX.utils.book_append_sheet(wb, ws, "Qoutes.xlsx");
     XLSX.writeFile(wb, "MyQoutes.xlsx");
