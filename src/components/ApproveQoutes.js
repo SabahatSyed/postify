@@ -103,9 +103,14 @@ let getMaincatName=''
 
     try {
       console.log("ds",selectquote.id)
+
       const frankDocRef = doc(db, "Quotes", selectquote.id);
       const a=await updateDoc(frankDocRef, {
-        isApprove:true
+        isApprove:true,
+        author:selectquote.author,
+        cat:selectquote.cat,
+        subcat:selectquote.subcat,
+        name:selectquote.name
       })
     } catch (err) {
         console.log(err)
