@@ -228,7 +228,7 @@ let getMaincatName=''
                   Set Category Of Your Quote
                 </InputLabel>
                 <Select
-                multiple
+                  multiple
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"

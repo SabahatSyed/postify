@@ -52,7 +52,7 @@ export default function AddQuotes() {
   const [eauthor, seteAuthor] = useState([]);
   const [etheme, seteTheme] = useState([]);
   const [eid, seteid] = useState("");
-  const [maincat, setmaincat] = useState("");
+  const [maincat, setmaincat] = useState([]);
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -73,8 +73,8 @@ export default function AddQuotes() {
     await addDoc(quotesRef, {
       name: name,
       author: author,
-      cat: [maincat],
-      subcat: [subtheme],
+      cat: theme,
+      subcat: subtheme,
       fav: favUser,
       isApprove: true,
       totalLikes: 0,
@@ -82,6 +82,7 @@ export default function AddQuotes() {
     setName("");
     setAuthor("");
     setTheme([]);
+    setsubTheme([]);
     getquotes();
   };
   console.log(etheme);
@@ -96,8 +97,8 @@ export default function AddQuotes() {
         objectsubmit = {
           name: ename,
           author: eauthor,
-          cat: [etheme],
-          subcat: [subtheme],
+          cat: etheme,
+          subcat: subtheme,
         };
       } else {
         objectsubmit = {
@@ -119,6 +120,7 @@ export default function AddQuotes() {
       seteName("");
       seteAuthor("");
       seteTheme([]);
+      setsubTheme([]);
       getquotes();
       setOpen1(false);
     } catch (err) {}
@@ -128,6 +130,7 @@ export default function AddQuotes() {
     //console.log(data);
     const q = query(collection(db, "Quotes"), where("isApprove", "==", true));
     const querySnapshot = await getDocs(q);
+    console.log("fhh",querySnapshot.docs)
     setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
   };
 
@@ -182,6 +185,7 @@ export default function AddQuotes() {
           name: array.name,
           author: array.author,
           cat: array.theme,
+          subcat:array.subcat,
           fav: favUser,
           isApprove: true,
           totalLikes: 0,
@@ -235,28 +239,70 @@ export default function AddQuotes() {
   let getsubid = [];
   const [Sub, setSub] = useState([]);
 
-  let getMaincatName = "";
+  let getMaincatName ;
 
   const dropdown = (e) => {
-    setTheme(e.target.value);
-    let id = e.target.value;
-    console.log(id);
-    getsubid = stages.find((ID) => ID.id === id).subcat || [];
-    console.log(getsubid);
-    setSub(getsubid);
+    let id = e;
+    console.log("id",e);
 
-    getMaincatName = stages.find((ID) => ID.id === id).name;
-    setmaincat(getMaincatName);
+    console.log("stages",stages);
+    var array=[];
+    e.map((item,index)=>{
+      
+      array[index]=(stages?.find((ID) => ID.name === item))
+    })
+    console.log("msindarray",array)
+
+    array?.map((item)=>{
+      if(item==undefined){
+      }
+      else{
+        item?.subcat?.map((i)=>{
+          if(i!=undefined){
+            getsubid.push(i)
+          }
+        })
+      }
+    })
+    console.log("msin",getsubid)
+    console.log("msin",subtheme)
+
+    //setsubTheme(getsubid)
+    setSub(getsubid);
+    //setmaincat(getMaincatName)
   };
 
-  const dropdownedit = (id) => {
-    setTheme(id);
-    console.log(id);
-    getsubid = stages.find((ID) => ID.id === id).subcat || [];
-    setSub(getsubid);
+  const dropdownedit = (e) => {
+    let id = e;
+    console.log("id",e);
 
-    getMaincatName = stages.find((ID) => ID.id === id).name;
-    setmaincat(getMaincatName);
+    console.log("stages",stages);
+    var array=[];
+    e.map((item,index)=>{
+      
+      array[index]=(stages?.find((ID) => ID.name === item))
+    })
+    console.log("msindarray",array)
+
+    array?.map((item)=>{
+      if(item==undefined){
+      }
+      else{
+        item?.subcat?.map((i)=>{
+          if(i!=undefined){
+            getsubid.push(i)
+          }
+        })
+      }
+    })
+    console.log("msin",getsubid)
+    console.log("msin",subtheme)
+
+    //setsubTheme(getsubid)
+    setSub(getsubid);
+    //setmaincat(getMaincatName)
+    
+    //setmaincat(getMaincatName)
   };
 
   const [sort, setsort] = useState("ASC");
@@ -428,15 +474,25 @@ export default function AddQuotes() {
                 Set Category Of Your Quote
               </InputLabel>
               <Select
+              multiple
                 labelId="demo-simple-select-label"
                 size="small"
                 id="demo-simple-select"
                 value={theme}
                 label="Theme"
-                onChange={(e) => dropdown(e)}
+                onChange={(e) => {
+                  console.log("dsa",e.target.value)
+                  console.log("tehems",theme)
+                  
+                  setTheme([...e.target.value
+                  ])
+                dropdown(e.target.value)
+
+                  
+                }}
               >
                 {stages.map((stages) => {
-                  return <MenuItem value={stages.id}>{stages.name}</MenuItem>;
+                  return <MenuItem value={stages.name}>{stages.name}</MenuItem>;
                 })}
               </Select>
             </FormControl>
@@ -446,12 +502,18 @@ export default function AddQuotes() {
                 Set Sub-Category Of Your Quote
               </InputLabel>
               <Select
+              multiple
                 labelId="demo-simple-select-label"
                 size="small"
                 id="demo-simple-select"
-                value={Sub}
+                value={subtheme}
                 label="Theme"
-                onChange={(e) => setsubTheme(e.target.value)}
+                onChange={(e) => {
+                  console.log("aubstehme",e.target.value)
+                  console.log("ahme",subtheme)
+                  setsubTheme([...e.target.value
+                  ])
+              }}
               >
                 {Sub.map((Sub) => {
                   return <MenuItem value={Sub}>{Sub}</MenuItem>;
@@ -496,17 +558,15 @@ export default function AddQuotes() {
               </tr>
             </thead>
             <tbody>
-              {quotes.map((quotes, ind) => {
-                console.log(quotes.subcat);
-                let sub = quotes.subcat;
-                console.log(sub);
+              {quotes?.map((quotes, ind) => {
+                let sub = quotes?.subcat;
                 return (
                   <tr key={ind}>
                     <td>{quotes.name}</td>
                     <td  >{quotes.cat}</td>
                     <td>{quotes.author}</td>
                     <tr >
-                    {sub?.map((val, index) => {console.log(val)
+                    {sub?.map((val, index) => {
                       return( <td style={{padding:11}} key={index}>{val}</td>)
                     })}
                     </tr>
@@ -590,19 +650,26 @@ export default function AddQuotes() {
                   Set Category Of Your Quote
                 </InputLabel>
                 <Select
+                multiple
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"
                   value={etheme}
                   label="Theme"
                   onChange={(e) => {
-                    seteTheme(e.target.value);
+                    console.log("dg",e.target.value)
+                    console.log("deeg",etheme)
+
+                    seteTheme([
+                    ...e.target.value
+                    ])
+                  dropdownedit(e.target.value)
                   }}
                 >
                   {stages.map((stages) => {
                     return (
                       <MenuItem
-                        onClick={() => dropdownedit(stages.id)}
+                        //onClick={() => dropdownedit(stages.id)}
                         value={stages.name}
                       >
                         {stages.name}
@@ -616,12 +683,18 @@ export default function AddQuotes() {
                   Set Sub-Category Of Your Quote
                 </InputLabel>
                 <Select
+                multiple
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"
                   value={subtheme}
                   label="Theme"
-                  onChange={(e) => setsubTheme(e.target.value)}
+                  onChange={(e) => {
+                    console.log("aubstehme",e.target.value)
+                  console.log("ahme",subtheme)
+                  setsubTheme([...e.target.value
+                  ])
+                }}
                 >
                   {Sub.map((Sub) => {
                     return <MenuItem value={Sub}>{Sub}</MenuItem>;
