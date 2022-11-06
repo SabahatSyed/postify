@@ -16,6 +16,7 @@ import Login from "./components/LogIn";
 import Favourite from "./components/Favourite";
 import Donations from "./components/Donations";
 import ApproveQoutes from "./components/ApproveQoutes"
+import Reports from "./components/Reports"
 function App() {
   return (
     <Router>
@@ -27,6 +28,8 @@ function App() {
           <Route path="/Dashboard/AddQuotes" element={<AddQuotes />} />
           <Route path="/Dashboard/AddQuotes/Approval" element={<ApproveQoutes />} />
           <Route path="/Dashboard/Forums" element={<Forums />} />
+          <Route path="/Dashboard/Notifications" element={<Reports />} />
+
           <Route path="/Dashboard/Forums/:cname/:id" element={<FourmsID/>} />
           {/* <Route path="/Dashboard/Favourite" element={<Favourite />} /> */}
           <Route path="/Dashboard/Donations" element={<Donations />} />

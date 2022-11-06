@@ -41,22 +41,42 @@ export default function AddQuotes() {
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [stages, setstages] = useState([]);
   const [quotes, setquotes] = useState([]);
+   const [subtheme, setsubTheme] = useState([]);
+  const [ename, seteName] = useState("");
+  const [eauthor, seteAuthor] = useState([]);
+  const [etheme, seteTheme] = useState([]);
+  const [eid, seteid] = useState("");
   const [selectquote,setselect]=useState({})
   const [open1, setOpen1] = useState(false);
   const handleOpen1 = () => setOpen1(true);
   const handleClose1 = () => setOpen1(false);
-  const [maincat, setmaincat] = useState("");
+  const [maincat, setmaincat] = useState([]);
   var maincatt=[]
   const getquotes = async () => {
     //console.log(data);
     const q =query( collection(db, "Quotes"),where("isApprove", "==", false) );
     const querySnapshot = await getDocs(q)
     setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    var quote=querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+    var quotee=quote
+    quotee?.map((item,index)=>{
+      if(typeof (item?.cat)=="string"){
+        var arr=[];
+        arr.push(item.cat)
+        quote[index].cat=arr
+        console.log("fssf")
+      }
+      if(item?.subcat==undefined){
+        quote[index].subcat=[]
+      }
+    })
+    setquotes(quote)
+    console.log("quotes",quote)
   };
 
   console.log(quotes)
   let getsubid = [];
-let getMaincatName=''
+let getMaincatName=[]
   const getstagesoflife = async () => {
     const data = await getDocs(stagessCollectionRef);
     console.log(data);
@@ -158,7 +178,24 @@ let getMaincatName=''
                           size="small"
                           value={quotes.id}
                           onClick={()=>{
-                            setselect({id:quotes.id,name:quotes.name,cat:quotes.cat,author:quotes.author,subcat:quotes.subcat})
+                            seteName(quotes.name);
+                            seteAuthor(quotes.author);
+                            seteTheme(quotes.cat);
+                            setsubTheme(quotes.subcat)
+                            seteid(quotes.id);
+                            console.log("quotes.cat",quotes.cat)
+                            var arr=[];
+
+                            if(typeof (quotes.cat)=="string"){
+                              arr.push(quotes.cat)
+                              console.log("quotes.cat",arr)
+                            }
+                            else{
+                              arr=quotes.cat
+                            }
+                           
+
+                            setselect({id:quotes.id,name:quotes.name,cat:arr,author:quotes.author,subcat:quotes.subcat})
                             handleOpen1()}}
                         >
                           Approve

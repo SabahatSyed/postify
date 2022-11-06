@@ -46,6 +46,7 @@ export default function Login() {
     )
       .then((res) => {
         console.log("resss", res);
+        localStorage.setItem("user", JSON.stringify(res));
         navigate("/Dashboard");
         console.log("resss", User);
       })

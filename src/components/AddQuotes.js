@@ -30,6 +30,7 @@ import {
   arrayUnion,
 } from "firebase/firestore";
 import * as XLSX from "xlsx";
+import { async } from "@firebase/util";
 
 const style = {
   position: "absolute",
@@ -68,17 +69,25 @@ export default function AddQuotes() {
   const [chk, setchk] = useState("");
   const stagessCollectionRef = collection(db, "stagesoflife");
   const [stages, setstages] = useState([]);
-
+  const userid = JSON.parse(localStorage.getItem("user"));
   const handleAdd = async () => {
+    const date=new Date(Date.now())
+    const datee=date.getDate()+"/"+(date.getMonth()+1)+"/"+date.getFullYear()
+    const Time=date.getHours()+":"+date.getMinutes()+":"+date.getSeconds()
     await addDoc(quotesRef, {
       name: name,
       author: author,
       cat: theme,
       subcat: subtheme,
       fav: favUser,
+      userbyNumber:userid.user.uid,
+      userbyName:userid.user.providerData[0].displayName,
+      date:datee,
+      time:Time,
       isApprove: true,
       totalLikes: 0,
     });
+
     setName("");
     setAuthor("");
     setTheme([]);
@@ -132,6 +141,15 @@ export default function AddQuotes() {
     const querySnapshot = await getDocs(q);
     console.log("fhh",querySnapshot.docs)
     setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
+    var quote=querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+    var quotee=quote
+    quotee?.map((item,index)=>{
+      if(typeof (item?.cat)=="string"){
+        quote[index].cat=[item.cat]
+      }
+    })
+    setquotes(quote)
+    console.log("quotes",quote)
   };
 
   const getapproval = async () => {
@@ -177,30 +195,111 @@ export default function AddQuotes() {
       };
     });
     promise.then((d) => {
-      console.log(d);
-      for (let i = 0; i < d.length; i++) {
-        let array = d[i];
+      console.log("fs",d);
+      var arrayobj=[]
+      var Array=[]
+      d.map((item,index)=>{
+        
+        
+        let array = d;
 
-        addDoc(quotesRef, {
-          name: array.name,
-          author: array.author,
-          cat: array.theme,
-          subcat:array.subcat,
-          fav: favUser,
-          isApprove: true,
-          totalLikes: 0,
-        });
-      }
+        console.log("asah",d)
+        if((Array.find((i)=>i.id==item.id))==undefined){
+          let dummy=d.filter((it)=>it.id==item.id)
+          console.log("dummy",dummy)
+          let obj,Cat=[],subcat=[];
+          dummy.map((itm)=>{
+            if((Cat.find((item)=>item==itm.cat))==undefined){
+              Cat.push(itm.cat)
+  
+            }
+            if(!(subcat.find((item)=>item==itm.subcat))){
+              subcat.push(itm.subcat)
+            }
+            obj=itm;
+          })
+          
+          obj.cat=Cat
+          obj.subcat=subcat
+          console.log("fs",typeof (obj.id))
+          if(typeof (obj.id)=="number"){
+            obj.id=obj.id+""
+
+          }
+          console.log("catss",Cat)
+          console.log("subcats",subcat)
+          console.log("finalobj",obj)
+            arrayobj.push(obj)
+            Array.push(obj)
+        }
+        
+      })
+      var finalarray=[]
+      console.log("carrayobj",arrayobj)
+      arrayobj.map((item)=>{
+        if(!(finalarray?.find((it)=>it.id==item.id))){
+          finalarray.push(item)
+        }
+      })
+      console.log("finalarray",finalarray)
+      var quoteDoc,add;
+      finalarray.map(async(it)=>{
+        console.log("it,",it)
+        quoteDoc = doc(db, "Quotes", it.id)
+        add=collection(db,"Quotes")
+        const q = query(
+          collection(db, "Quotes"),
+         //where("name", "==", cname)
+        );
+    
+        const querySnapshot = await getDocs(q);
+        const datas = querySnapshot.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id,
+        }));
+        const a=datas.find((item)=>item.id==it.id)
+        console.log("dso",a)
+        	
+            console.log("else",it)
+
+        const c=await updateDoc(quoteDoc,it)
+        .then((res)=>{
+            console.log("ress",res)
+        }).catch(async(err)=>{
+          const b=await addDoc(add,it)
+        })
+      
+      })
+      
+            console.log("asa",finalarray)
+            getquotes()
+
+
     });
   };
 
   const exportdata = () => {
     console.log("exported",quotes);
     var quote=quotes
-    quotes?.map((items,index)=>{
+    var final=[]
+    quotes?.map((item,index)=>{
+      item?.cat?.map((it)=>{
+        item.subcat?.map((i)=>{
+          final.push({...item,cat:it,subcat:i})
+        })
+      })
+      console.log("final",final)
+
+     // item?.cat
+
+    })
+    /*quotes?.map((items,index)=>{
       var cats=""
       items.cat?.map((i)=>{
-        cats=i+" "+cats
+        if(i!=null){
+           cats=i+","+cats
+        }
+       
       })
       quote[index].cat=cats
 
@@ -208,21 +307,24 @@ export default function AddQuotes() {
     quotes?.map((items,index)=>{
       var subcats=""
       items.subcat?.map((i)=>{
-        subcats=i+" "+subcats
+        if(i!=null){
+        subcats=i+","+subcats}
       })
       quote[index].subcat=subcats
     })
     quotes?.map((items,index)=>{
       var fav=""
       items.fav?.map((i)=>{
-        fav=i+" "+fav
+        if(i!=null){
+        fav=i+","+fav
+        }
       })
       quote[index].fav=fav
     })
-    console.log("finalquotes",quote)
+    console.log("finalquotes",quote)*/
 
     let wb = XLSX.utils.book_new();
-    let ws = XLSX.utils.json_to_sheet(quote);
+    let ws = XLSX.utils.json_to_sheet(final);
 
     XLSX.utils.book_append_sheet(wb, ws, "Qoutes.xlsx");
     XLSX.writeFile(wb, "MyQoutes.xlsx");
@@ -297,9 +399,10 @@ export default function AddQuotes() {
     })
     console.log("msin",getsubid)
     console.log("msin",subtheme)
+    setsubTheme(subtheme?.filter((item)=>item!=""))
 
     //setsubTheme(getsubid)
-    setSub(getsubid);
+    setSub(getsubid?.filter((item)=>item!=""));
     //setmaincat(getMaincatName)
     
     //setmaincat(getMaincatName)
@@ -351,7 +454,7 @@ export default function AddQuotes() {
     <div>
       <div className="p-4 m-4">
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
-          <b>QUOTES MANAGMENT</b>
+          <b>QUOTES MANAGEMENT</b>
         </h1>
         {chk === "true" && (
           <MapsUgcIcon
@@ -390,18 +493,7 @@ export default function AddQuotes() {
         >
           Add Quotes
         </Button>
-        {/* <Button
-        type='flie'
-          variant="contained"
-          style={{
-            float: "right",
-            backgroundColor: "#65350f",
-            marginBottom: 30,
-          }}
-          //   onClick={handleOpen}
-        >
-          Upload Quotes
-        </Button> */}
+         
 
         <Button
           variant="contained"
@@ -545,14 +637,14 @@ export default function AddQuotes() {
                 <th className="col-3" onClick={() => sortqoutes("cat")}>
                   Category
                 </th>
-                <th className="col-4" onClick={() => sortqoutes("author")}>
+                <th className="col-2" onClick={() => sortqoutes("author")}>
                   Author
                 </th>
-                <th className="col-5" onClick={() => sortqoutes("subcat")}>
+                <th className="col-2" onClick={() => sortqoutes("subcat")}>
                   Sub Category
                 </th>
-                <th className="col-7">Action</th>
-                <th className="col-8" onClick={() => sortqoutes("totalLikes")}>
+                <th className="col-6">Action</th>
+                <th className="col-10" onClick={() => sortqoutes("totalLikes")}>
                   Likes
                 </th>
               </tr>

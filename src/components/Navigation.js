@@ -59,6 +59,14 @@ export default function Navigation() {
                   ></img>
                   Categories
                 </Link>
+                <Link class="nav-link sidenavtext " to="/Dashboard/Notifications">
+                  <div class="sb-nav-link-icon"></div>
+                  <img
+                    src={logo}
+                    style={{ width: 25, height: 25, marginRight: 15 }}
+                  ></img>
+                  Notifications
+                </Link>
 
                 <Link class="nav-link sidenavtext " to="/Dashboard/AddQuotes">
                   <div class="sb-nav-link-icon"></div>
