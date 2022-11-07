@@ -258,11 +258,16 @@ export default function AddQuotes() {
         	
             console.log("else",it)
 
-        const c=await updateDoc(quoteDoc,it)
-        .then((res)=>{
+        const quoteDocd = doc(db, "Quotes", it.id);
+        await deleteDoc(quoteDocd)
+        .then(async(res)=>{
             console.log("ress",res)
+            const b=await addDoc(add,it)
+            const c=await updateDoc(quoteDoc,it)
+
         }).catch(async(err)=>{
           const b=await addDoc(add,it)
+          const c=await updateDoc(quoteDoc,it)
         })
       
       })
