@@ -93,11 +93,13 @@ export default function StagesOfLife() {
           const documentid = await addDoc(stagessCollectionRef, {
             name: name,
             image: path,
+            subcat:[],
             art: pathart,
           });
           console.log(documentid.id);
           await addDoc(createforum, {
             cat: name,
+            subcat:[],
             image: pathart,
             categoryID: documentid.id,
           });

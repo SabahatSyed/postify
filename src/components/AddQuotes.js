@@ -194,6 +194,11 @@ export default function AddQuotes() {
         rej(err);
       };
     });
+    quotes.map(async(item)=>{
+      const quoteDocd = doc(db, "Quotes", item.id);
+      await deleteDoc(quoteDocd);
+    })
+    
     promise.then((d) => {
       console.log("fs",d);
       var arrayobj=[]
@@ -239,6 +244,7 @@ export default function AddQuotes() {
       })
       console.log("finalarray",finalarray)
       var quoteDoc,add;
+     
       finalarray.map(async(it)=>{
         console.log("it,",it)
         quoteDoc = doc(db, "Quotes", it.id)
@@ -258,17 +264,9 @@ export default function AddQuotes() {
         	
             console.log("else",it)
 
-        const quoteDocd = doc(db, "Quotes", it.id);
-        await deleteDoc(quoteDocd)
-        .then(async(res)=>{
-            console.log("ress",res)
-            const b=await addDoc(add,it)
-            const c=await updateDoc(quoteDoc,it)
-
-        }).catch(async(err)=>{
-          const b=await addDoc(add,it)
-          const c=await updateDoc(quoteDoc,it)
-        })
+       const b=await addDoc(add,it)
+       console.log("c",b)
+        //const ans=await updateDoc(quoteDocit.id)
       
       })
       
