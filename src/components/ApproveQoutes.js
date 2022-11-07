@@ -59,7 +59,7 @@ export default function AddQuotes() {
     setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     var quote=querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
     var quotee=quote
-    quotee?.map((item,index)=>{
+   /* quotee?.map((item,index)=>{
       if(typeof (item?.cat)=="string"){
         var arr=[];
         arr.push(item.cat)
@@ -69,7 +69,7 @@ export default function AddQuotes() {
       if(item?.subcat==undefined){
         quote[index].subcat=[]
       }
-    })
+    })*/
     setquotes(quote)
     console.log("quotes",quote)
   };
@@ -88,17 +88,16 @@ let getMaincatName=[]
 
     let id = e;
     console.log(id);
-    var array=[];
-    e.map((item,index)=>{
-      
-      array[index]=(stages.find((ID) => ID.name === item).subcat || [])
-    })
+    var array="";
+    
+      array=(stages.find((ID) => ID.name === e).subcat || [])
+    
     console.log("subcatergesarray",array)
-    array.map((item)=>{
-      item.map((it)=>{
+    
+      array.map((it)=>{
         getsubid.push(it)
       })
-    })
+    
     console.log("subcaterges",getsubid)
 
     setSub(getsubid);
@@ -184,18 +183,18 @@ let getMaincatName=[]
                             setsubTheme(quotes.subcat)
                             seteid(quotes.id);
                             console.log("quotes.cat",quotes.cat)
-                            var arr=[];
+                            //var arr=[];
 
-                            if(typeof (quotes.cat)=="string"){
-                              arr.push(quotes.cat)
-                              console.log("quotes.cat",arr)
-                            }
-                            else{
-                              arr=quotes.cat
-                            }
+                            //if(typeof (quotes.cat)=="string"){
+                            //  arr.push(quotes.cat)
+                           //   console.log("quotes.cat",arr)
+                           // }
+                           // else{
+                           //   arr=quotes.cat
+                          //  }
                            
 
-                            setselect({id:quotes.id,name:quotes.name,cat:arr,author:quotes.author,subcat:quotes.subcat})
+                            setselect({id:quotes.id,name:quotes.name,cat:quotes.cat,author:quotes.author,subcat:[]})
                             handleOpen1()}}
                         >
                           Approve
@@ -265,7 +264,6 @@ let getMaincatName=[]
                   Set Category Of Your Quote
                 </InputLabel>
                 <Select
-                  multiple
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"

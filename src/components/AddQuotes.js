@@ -47,13 +47,13 @@ export default function AddQuotes() {
   const [author, setAuthor] = useState([]);
   const [favUser, setfavUser] = useState([]);
 
-  const [theme, setTheme] = useState([]);
+  const [theme, setTheme] = useState("");
   const [subtheme, setsubTheme] = useState([]);
   const [ename, seteName] = useState("");
   const [eauthor, seteAuthor] = useState([]);
-  const [etheme, seteTheme] = useState([]);
+  const [etheme, seteTheme] = useState();
   const [eid, seteid] = useState("");
-  const [maincat, setmaincat] = useState([]);
+  const [maincat, setmaincat] = useState();
 
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -90,7 +90,7 @@ export default function AddQuotes() {
 
     setName("");
     setAuthor("");
-    setTheme([]);
+    setTheme();
     setsubTheme([]);
     getquotes();
   };
@@ -128,7 +128,7 @@ export default function AddQuotes() {
 
       seteName("");
       seteAuthor("");
-      seteTheme([]);
+      seteTheme();
       setsubTheme([]);
       getquotes();
       setOpen1(false);
@@ -142,12 +142,12 @@ export default function AddQuotes() {
     console.log("fhh",querySnapshot.docs)
     setquotes(querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id })));
     var quote=querySnapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-    var quotee=quote
-    quotee?.map((item,index)=>{
-      if(typeof (item?.cat)=="string"){
-        quote[index].cat=[item.cat]
-      }
-    })
+    //var quotee=quote
+    //quotee?.map((item,index)=>{
+    //  if(typeof (item?.cat)=="string"){
+    //    quote[index].cat=item.cat
+    //  }
+   // })
     setquotes(quote)
     console.log("quotes",quote)
   };
@@ -209,17 +209,13 @@ export default function AddQuotes() {
           console.log("dummy",dummy)
           let obj,Cat=[],subcat=[];
           dummy.map((itm)=>{
-            if((Cat.find((item)=>item==itm.cat))==undefined){
-              Cat.push(itm.cat)
-  
-            }
+            
             if(!(subcat.find((item)=>item==itm.subcat))){
               subcat.push(itm.subcat)
             }
             obj=itm;
           })
           
-          obj.cat=Cat
           obj.subcat=subcat
           console.log("fs",typeof (obj.id))
           if(typeof (obj.id)=="number"){
@@ -283,11 +279,10 @@ export default function AddQuotes() {
     var quote=quotes
     var final=[]
     quotes?.map((item,index)=>{
-      item?.cat?.map((it)=>{
         item.subcat?.map((i)=>{
-          final.push({...item,cat:it,subcat:i})
+          final.push({...item,subcat:i})
         })
-      })
+      
       console.log("final",final)
 
      // item?.cat
@@ -348,24 +343,23 @@ export default function AddQuotes() {
     console.log("id",e);
 
     console.log("stages",stages);
-    var array=[];
-    e.map((item,index)=>{
-      
-      array[index]=(stages?.find((ID) => ID.name === item))
-    })
+    var array="";
+   
+      array=(stages?.find((ID) => ID.name === e))
+  
     console.log("msindarray",array)
 
-    array?.map((item)=>{
-      if(item==undefined){
+   
+      if(array==undefined){
       }
       else{
-        item?.subcat?.map((i)=>{
+        array?.subcat?.map((i)=>{
           if(i!=undefined){
             getsubid.push(i)
           }
         })
       }
-    })
+    
     console.log("msin",getsubid)
     console.log("msin",subtheme)
 
@@ -379,24 +373,23 @@ export default function AddQuotes() {
     console.log("id",e);
 
     console.log("stages",stages);
-    var array=[];
-    e.map((item,index)=>{
-      
-      array[index]=(stages?.find((ID) => ID.name === item))
-    })
+    var array="";
+   
+      array=(stages?.find((ID) => ID.name === e))
+  
     console.log("msindarray",array)
 
-    array?.map((item)=>{
-      if(item==undefined){
+  
+      if(array==undefined){
       }
       else{
-        item?.subcat?.map((i)=>{
+      array?.subcat?.map((i)=>{
           if(i!=undefined){
             getsubid.push(i)
           }
         })
       }
-    })
+    
     console.log("msin",getsubid)
     console.log("msin",subtheme)
     setsubTheme(subtheme?.filter((item)=>item!=""))
@@ -566,7 +559,6 @@ export default function AddQuotes() {
                 Set Category Of Your Quote
               </InputLabel>
               <Select
-              multiple
                 labelId="demo-simple-select-label"
                 size="small"
                 id="demo-simple-select"
@@ -576,8 +568,8 @@ export default function AddQuotes() {
                   console.log("dsa",e.target.value)
                   console.log("tehems",theme)
                   
-                  setTheme([...e.target.value
-                  ])
+                  setTheme(e.target.value
+                  )
                 dropdown(e.target.value)
 
                   
@@ -675,7 +667,7 @@ export default function AddQuotes() {
                             seteName(quotes.name);
                             seteAuthor(quotes.author);
                             seteTheme(quotes.cat);
-                            setsubTheme(quotes.subcat)
+                            setsubTheme([])
                             seteid(quotes.id);
                             handleOpen1();
                             // handleOpenEdit(stage)
@@ -742,7 +734,6 @@ export default function AddQuotes() {
                   Set Category Of Your Quote
                 </InputLabel>
                 <Select
-                multiple
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"
@@ -752,9 +743,8 @@ export default function AddQuotes() {
                     console.log("dg",e.target.value)
                     console.log("deeg",etheme)
 
-                    seteTheme([
-                    ...e.target.value
-                    ])
+                    seteTheme(e.target.value
+                    )
                   dropdownedit(e.target.value)
                   }}
                 >
