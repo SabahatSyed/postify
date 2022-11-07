@@ -48,6 +48,8 @@ export default function AddQuotes() {
   const [favUser, setfavUser] = useState([]);
 
   const [theme, setTheme] = useState("");
+  const [esubtheme, setesubTheme] = useState([]);
+
   const [subtheme, setsubTheme] = useState([]);
   const [ename, seteName] = useState("");
   const [eauthor, seteAuthor] = useState([]);
@@ -102,19 +104,19 @@ export default function AddQuotes() {
       console.log(qoutedata.data());
       const document = qoutedata.data();
       let objectsubmit = {};
-      if (document !== subtheme) {
+      if (document !== esubtheme) {
         objectsubmit = {
           name: ename,
           author: eauthor,
           cat: etheme,
-          subcat: subtheme,
+          subcat: esubtheme,
         };
       } else {
         objectsubmit = {
           name: ename,
           author: eauthor,
           cat: etheme,
-          subcat: subtheme,
+          subcat: esubtheme,
         };
       }
       const frankDocRef = doc(db, "Quotes", eid);
@@ -373,9 +375,10 @@ export default function AddQuotes() {
 
   const dropdownedit = (e) => {
     let id = e;
-    console.log("id",e);
+    setesubTheme([])
 
-    console.log("stages",stages);
+    console.log("id",e);
+    console.log("stages",esubtheme);
     var array="";
    
       array=(stages?.find((ID) => ID.name === e))
@@ -395,7 +398,8 @@ export default function AddQuotes() {
     
     console.log("msin",getsubid)
     console.log("msin",subtheme)
-    setsubTheme(subtheme?.filter((item)=>item!=""))
+  
+    setesubTheme([])
 
     //setsubTheme(getsubid)
     setSub(getsubid?.filter((item)=>item!=""));
@@ -594,6 +598,7 @@ export default function AddQuotes() {
                 size="small"
                 id="demo-simple-select"
                 value={subtheme}
+                
                 label="Theme"
                 onChange={(e) => {
                   console.log("aubstehme",e.target.value)
@@ -670,7 +675,7 @@ export default function AddQuotes() {
                             seteName(quotes.name);
                             seteAuthor(quotes.author);
                             seteTheme(quotes.cat);
-                            setsubTheme([])
+                            setesubTheme(quotes.subcat)
                             seteid(quotes.id);
                             handleOpen1();
                             // handleOpenEdit(stage)
@@ -768,16 +773,17 @@ export default function AddQuotes() {
                   Set Sub-Category Of Your Quote
                 </InputLabel>
                 <Select
-                multiple
+                  multiple
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"
-                  value={subtheme}
+                  value={esubtheme}
+                  renderValue={(esubtheme) => esubtheme.join(", ")}
                   label="Theme"
                   onChange={(e) => {
                     console.log("aubstehme",e.target.value)
-                  console.log("ahme",subtheme)
-                  setsubTheme([...e.target.value
+                  console.log("ahme",esubtheme)
+                  setesubTheme([...e.target.value
                   ])
                 }}
                 >

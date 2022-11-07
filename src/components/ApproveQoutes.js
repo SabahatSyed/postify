@@ -99,7 +99,7 @@ let getMaincatName=[]
       })
     
     console.log("subcaterges",getsubid)
-
+      setsubTheme([])
     setSub(getsubid);
 
     getMaincatName = stages.find((ID) => ID.id === id)?.name;
@@ -302,9 +302,12 @@ let getMaincatName=[]
                   labelId="demo-simple-select-label"
                   size="small"
                   id="demo-simple-select"
-                  value={selectquote.subcat}
+                  value={subtheme}
+                  renderValue={(subtheme) => subtheme.join(", ")}
+
                   label="Theme"
                   onChange={(e) => {
+                    setsubTheme([...e.target.value])
                     var x={subcat:e.target.value}
                     setselect(shopCart => ({
                     ...shopCart,
