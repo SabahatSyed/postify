@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import * as XLSX from "xlsx";
 import {
   Autocomplete,
   Button,
@@ -64,6 +65,40 @@ export default function AllUsers() {
     //setloading(true);
   };
 
+  const readExcel = (file) => {
+    const promise = new Promise((res, rej) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        res(data);
+      };
+      fileReader.onerror = (err) => {
+        rej(err);
+      };
+    });
+    
+    
+    promise.then((d) => {
+      
+
+            console.log("asa",d)
+            d.map(async(item)=>{
+              const frankDocRef = doc(db, "users", item.id);
+              await updateDoc(frankDocRef, item);
+              console.log("asxahello")
+            })
+            getusers()
+
+
+    });
+  };
   const handleUpdate = async () => {
     try {
       const frankDocRef = doc(db, "users", uid);
@@ -87,12 +122,97 @@ export default function AllUsers() {
     }
   };
 
+
+ 
+  const exportdata = () => {
+    console.log("exported",users);
+    var quote=users
+    var final=[]
+  /*  users?.map((item,index)=>{
+
+        item.subcat?.map((i)=>{
+          final.push({...item,subcat:i})
+        })
+      
+      console.log("final",final)
+
+     // item?.cat
+
+    })*/
+    /*quotes?.map((items,index)=>{
+      var cats=""
+      items.cat?.map((i)=>{
+        if(i!=null){
+           cats=i+","+cats
+        }
+       
+      })
+      quote[index].cat=cats
+
+    })
+    quotes?.map((items,index)=>{
+      var subcats=""
+      items.subcat?.map((i)=>{
+        if(i!=null){
+        subcats=i+","+subcats}
+      })
+      quote[index].subcat=subcats
+    })
+    quotes?.map((items,index)=>{
+      var fav=""
+      items.fav?.map((i)=>{
+        if(i!=null){
+        fav=i+","+fav
+        }
+      })
+      quote[index].fav=fav
+    })
+    console.log("finalquotes",quote)*/
+
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.json_to_sheet(users);
+
+    XLSX.utils.book_append_sheet(wb, ws, "Users.xlsx");
+    XLSX.writeFile(wb, "MyUsers.xlsx");
+  };
   return (
     <div>
       <div className="p-4 m-4">
         <h1 style={{ textAlign: "center", marginBottom: 40 }}>
           <b>ALL USERS</b>
         </h1>
+        <Button
+          variant="contained"
+          component="label"
+          style={{
+            float: "right",
+            backgroundColor: "#65350f",
+            marginBottom: 30,
+          }}
+        >
+          Upload User
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              readExcel(file);
+            }}
+            hidden
+          />
+        </Button>
+        <Button
+          onClick={exportdata}
+          variant="contained"
+          component="label"
+          style={{
+            float: "right",
+            backgroundColor: "#65350f",
+            marginBottom: 30,
+            marginRight: 10,
+          }}
+        >
+          Export
+        </Button>
         <div>
           <table className="table" style={{ textAlign: "center" }}>
             <thead>

@@ -107,6 +107,28 @@ let getMaincatName=[]
     setmaincat(getMaincatName)
     
   };
+
+  const dropdowne = (e) => {
+    console.log("da",maincatt);
+
+    let id = e;
+    console.log("e",id);
+    var array="";
+    
+      array=(stages.find((ID) => ID.name === e).subcat || [])
+    
+    console.log("subcatergesarray",array)
+    
+      array.map((it)=>{
+        getsubid.push(it)
+      })
+    
+    console.log("subcaterges",getsubid)
+    setSub(getsubid);
+
+    
+    
+  };
   const handleRefuse = async (id) => {
 
     try {
@@ -182,7 +204,11 @@ let getMaincatName=[]
                             seteTheme(quotes.cat);
                             setsubTheme(quotes.subcat)
                             seteid(quotes.id);
-                            console.log("quotes.cat",quotes.cat)
+                            dropdowne(quotes.cat)
+                            if(quotes.subcat==undefined){
+                              setsubTheme([])
+                            }
+                            console.log("quotes.cat",quotes.subcat)
                             //var arr=[];
 
                             //if(typeof (quotes.cat)=="string"){
@@ -194,7 +220,7 @@ let getMaincatName=[]
                           //  }
                            
 
-                            setselect({id:quotes.id,name:quotes.name,cat:quotes.cat,author:quotes.author,subcat:[]})
+                            setselect({id:quotes.id,name:quotes.name,cat:quotes.cat,author:quotes.author,subcat:subtheme})
                             handleOpen1()}}
                         >
                           Approve

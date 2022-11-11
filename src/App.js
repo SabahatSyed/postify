@@ -17,6 +17,7 @@ import Favourite from "./components/Favourite";
 import Donations from "./components/Donations";
 import ApproveQoutes from "./components/ApproveQoutes"
 import Reports from "./components/Reports"
+import SubStages from './components/SubStages'
 function App() {
   return (
     <Router>
@@ -24,6 +25,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/Dashboard" element={<Navigation />}>
           <Route path="/Dashboard/StagesOfLife" element={<StagesOfLife />} />
+          <Route path="/Dashboard/SubStages" element={<SubStages />} />
+
           <Route path="/Dashboard/AllUsers" element={<AllUsers />} />
           <Route path="/Dashboard/AddQuotes" element={<AddQuotes />} />
           <Route path="/Dashboard/AddQuotes/Approval" element={<ApproveQoutes />} />

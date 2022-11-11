@@ -677,6 +677,7 @@ export default function AddQuotes() {
                             seteTheme(quotes.cat);
                             setesubTheme(quotes.subcat)
                             seteid(quotes.id);
+                            dropdown(quotes.cat)
                             handleOpen1();
                             // handleOpenEdit(stage)
                           }}

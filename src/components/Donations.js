@@ -5,6 +5,7 @@ import "./css/styles.css";
 //import { DataGrid } from "@mui/x-data-grid";
 //import Box from "@mui/material/Box";
 import Modal from "@mui/material/Modal";
+import * as XLSX from "xlsx";
 
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ThumbUpIcon from "@mui/icons-material/ThumbUp";
@@ -12,6 +13,7 @@ import { db } from "../firebase";
 import {
   collection,
   addDoc,
+  updateDoc,
   getDocs,
   doc,
   deleteDoc,
@@ -46,13 +48,130 @@ export default function AllUsers() {
   useEffect(() => {
     getdonation();
   }, []);
+  const exportdata = () => {
+    console.log("exported",donation);
+    var quote=donation
+    var final=[]
+  /*  users?.map((item,index)=>{
 
+        item.subcat?.map((i)=>{
+          final.push({...item,subcat:i})
+        })
+      
+      console.log("final",final)
+
+     // item?.cat
+
+    })*/
+    /*quotes?.map((items,index)=>{
+      var cats=""
+      items.cat?.map((i)=>{
+        if(i!=null){
+           cats=i+","+cats
+        }
+       
+      })
+      quote[index].cat=cats
+
+    })
+    quotes?.map((items,index)=>{
+      var subcats=""
+      items.subcat?.map((i)=>{
+        if(i!=null){
+        subcats=i+","+subcats}
+      })
+      quote[index].subcat=subcats
+    })
+    quotes?.map((items,index)=>{
+      var fav=""
+      items.fav?.map((i)=>{
+        if(i!=null){
+        fav=i+","+fav
+        }
+      })
+      quote[index].fav=fav
+    })
+    console.log("finalquotes",quote)*/
+
+    let wb = XLSX.utils.book_new();
+    let ws = XLSX.utils.json_to_sheet(donation );
+
+    XLSX.utils.book_append_sheet(wb, ws, "Donations.xlsx");
+    XLSX.writeFile(wb, "MyDonations.xlsx");
+  };
+
+  const readExcel = (file) => {
+    const promise = new Promise((res, rej) => {
+      const fileReader = new FileReader();
+      fileReader.readAsArrayBuffer(file);
+
+      fileReader.onload = (e) => {
+        const bufferArray = e.target.result;
+
+        const wb = XLSX.read(bufferArray, { type: "buffer" });
+        const wsname = wb.SheetNames[0];
+        const ws = wb.Sheets[wsname];
+        const data = XLSX.utils.sheet_to_json(ws);
+        res(data);
+      };
+      fileReader.onerror = (err) => {
+        rej(err);
+      };
+    });
+    
+    
+    promise.then((d) => {
+      
+
+            console.log("asa",d)
+            d.map(async(item)=>{
+              const frankDocRef = doc(db, "donation", item.id);
+              await updateDoc(frankDocRef, item);
+              console.log("asxahello")
+            })
+            getdonation()
+
+
+    });
+  };
   return (
     <div>
       <div className="p-4 m-4">
         <h2 style={{ textAlign: "center", marginBottom: 50 }}>
           <b>DONATIONS</b>
         </h2>
+        <Button
+          variant="contained"
+          component="label"
+          style={{
+            float: "right",
+            backgroundColor: "#65350f",
+            marginBottom: 30,
+          }}
+        >
+          Upload Donation
+          <input
+            type="file"
+            onChange={(e) => {
+              const file = e.target.files[0];
+              readExcel(file);
+            }}
+            hidden
+          />
+        </Button>
+        <Button
+          onClick={exportdata}
+          variant="contained"
+          component="label"
+          style={{
+            float: "right",
+            backgroundColor: "#65350f",
+            marginBottom: 30,
+            marginRight: 10,
+          }}
+        >
+          Export
+        </Button>
         <div>
           <table className="table">
             <thead>
